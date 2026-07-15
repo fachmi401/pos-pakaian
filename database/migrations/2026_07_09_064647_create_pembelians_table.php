@@ -1,29 +1,35 @@
-<?php
+    <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+    use Illuminate\Database\Migrations\Migration;
+    use Illuminate\Database\Schema\Blueprint;
+    use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    public function up(): void
+    return new class extends Migration
     {
-        Schema::create('pembelians', function (Blueprint $table) {
-            $table->id();
+        public function up(): void
+        {
+            Schema::create('pembelians', function (Blueprint $table) {
 
-            $table->foreignId('supplier_id')
-                  ->constrained('suppliers')
-                  ->onDelete('cascade');
+                $table->id();
 
-            $table->date('tanggal');
-            $table->decimal('total', 12, 2)->default(0);
+                $table->foreignId('supplier_id')
+                    ->constrained('suppliers')
+                    ->cascadeOnDelete();
 
-            $table->timestamps();
-        });
-    }
+                $table->foreignId('kasir_id')
+                    ->constrained('kasirs')
+                    ->cascadeOnDelete();
 
-    public function down(): void
-    {
-        Schema::dropIfExists('pembelians');
-    }
-};
+                $table->date('tanggal');
+
+                $table->decimal('total', 15, 2)->default(0);
+
+                $table->timestamps();
+            });
+        }
+
+        public function down(): void
+        {
+            Schema::dropIfExists('pembelians');
+        }
+    };

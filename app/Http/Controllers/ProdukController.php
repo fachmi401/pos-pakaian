@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Produk;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 
 class ProdukController extends Controller
@@ -12,7 +13,8 @@ class ProdukController extends Controller
      */
     public function index()
     {
-        //
+        $produks = Produk::with('kategori')->get();
+        return view('produk.index', compact('produks'));
     }
 
     /**
@@ -20,7 +22,8 @@ class ProdukController extends Controller
      */
     public function create()
     {
-        //
+        $kategoris = Kategori::all();
+        return view('produk.create', compact('kategoris'));
     }
 
     /**
@@ -28,7 +31,26 @@ class ProdukController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'kategori_id' => 'required',
+            'nama_produk' => 'required',
+            'ukuran' => 'required',
+            'warna' => 'required',
+            'harga' => 'required',
+            'stok' => 'required'
+        ]);
+
+        Produk::create([
+            'kategori_id' => $request->kategori_id,
+            'nama_produk' => $request->nama_produk,
+            'ukuran' => $request->ukuran,
+            'warna' => $request->warna,
+            'harga' => $request->harga,
+            'stok' => $request->stok,
+        ]);
+
+        return redirect()->route('produk.index')
+            ->with('success', 'Produk berhasil ditambahkan');
     }
 
     /**
@@ -36,7 +58,7 @@ class ProdukController extends Controller
      */
     public function show(Produk $produk)
     {
-        //
+        return view('produk.show', compact('produk'));
     }
 
     /**
@@ -44,7 +66,8 @@ class ProdukController extends Controller
      */
     public function edit(Produk $produk)
     {
-        //
+        $kategoris = Kategori::all();
+        return view('produk.edit', compact('produk', 'kategoris'));
     }
 
     /**
@@ -52,7 +75,26 @@ class ProdukController extends Controller
      */
     public function update(Request $request, Produk $produk)
     {
-        //
+        $request->validate([
+            'kategori_id' => 'required',
+            'nama_produk' => 'required',
+            'ukuran' => 'required',
+            'warna' => 'required',
+            'harga' => 'required',
+            'stok' => 'required'
+        ]);
+
+        $produk->update([
+            'kategori_id' => $request->kategori_id,
+            'nama_produk' => $request->nama_produk,
+            'ukuran' => $request->ukuran,
+            'warna' => $request->warna,
+            'harga' => $request->harga,
+            'stok' => $request->stok,
+        ]);
+
+        return redirect()->route('produk.index')
+            ->with('success', 'Produk berhasil diupdate');
     }
 
     /**
@@ -60,6 +102,9 @@ class ProdukController extends Controller
      */
     public function destroy(Produk $produk)
     {
-        //
+        $produk->delete();
+
+        return redirect()->route('produk.index')
+            ->with('success', 'Produk berhasil dihapus');
     }
 }

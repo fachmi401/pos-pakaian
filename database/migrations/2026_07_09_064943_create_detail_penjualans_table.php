@@ -1,34 +1,28 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace App\Models;
 
-return new class extends Migration
+use Illuminate\Database\Eloquent\Model;
+
+class DetailPenjualan extends Model
 {
-    public function up(): void
+    protected $fillable = [
+        'penjualan_id',
+        'produk_id',
+        'qty',
+        'harga_jual',
+        'subtotal',
+    ];
+
+    // Relasi ke Penjualan
+    public function penjualan()
     {
-        Schema::create('detail_penjualans', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('penjualan_id')
-                  ->constrained('penjualans')
-                  ->onDelete('cascade');
-
-            $table->foreignId('produk_id')
-                  ->constrained('produks')
-                  ->onDelete('cascade');
-
-            $table->integer('qty');
-            $table->decimal('harga_jual', 12, 2);
-            $table->decimal('subtotal', 12, 2);
-
-            $table->timestamps();
-        });
+        return $this->belongsTo(Penjualan::class);
     }
 
-    public function down(): void
+    // Relasi ke Produk
+    public function produk()
     {
-        Schema::dropIfExists('detail_penjualans');
+        return $this->belongsTo(Produk::class);
     }
-};
+}

@@ -9,19 +9,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('detail_pembelians', function (Blueprint $table) {
+
             $table->id();
 
             $table->foreignId('pembelian_id')
                   ->constrained('pembelians')
-                  ->onDelete('cascade');
+                  ->cascadeOnDelete();
 
             $table->foreignId('produk_id')
                   ->constrained('produks')
-                  ->onDelete('cascade');
+                  ->cascadeOnDelete();
 
-            $table->integer('qty');
-            $table->decimal('harga_beli', 12, 2);
-            $table->decimal('subtotal', 12, 2);
+            $table->integer('jumlah');
+
+            $table->decimal('harga_beli',15,2);
+
+            $table->decimal('subtotal',15,2);
 
             $table->timestamps();
         });

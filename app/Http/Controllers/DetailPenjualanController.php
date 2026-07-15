@@ -3,63 +3,81 @@
 namespace App\Http\Controllers;
 
 use App\Models\DetailPenjualan;
+use App\Models\Penjualan;
+use App\Models\Produk;
 use Illuminate\Http\Request;
 
 class DetailPenjualanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $detailPenjualans = DetailPenjualan::with('penjualan','produk')->get();
+
+        return view('detail-penjualan.index', compact('detailPenjualans'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $penjualans = Penjualan::all();
+        $produks = Produk::all();
+
+        return view('detail-penjualan.create', compact('penjualans','produks'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'penjualan_id'=>'required',
+            'produk_id'=>'required',
+            'qty'=>'required|numeric',
+            'harga_jual'=>'required|numeric',
+            'subtotal'=>'required|numeric'
+        ]);
+
+        DetailPenjualan::create($request->all());
+
+        return redirect()->route('detail-penjualan.index')
+                ->with('success','Data berhasil ditambahkan');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(DetailPenjualan $detailPenjualan)
     {
-        //
+        return view('detail-penjualan.show', compact('detailPenjualan'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(DetailPenjualan $detailPenjualan)
     {
-        //
+        $penjualans = Penjualan::all();
+        $produks = Produk::all();
+
+        return view('detail-penjualan.edit', compact(
+            'detailPenjualan',
+            'penjualans',
+            'produks'
+        ));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, DetailPenjualan $detailPenjualan)
     {
-        //
+        $request->validate([
+            'penjualan_id'=>'required',
+            'produk_id'=>'required',
+            'qty'=>'required|numeric',
+            'harga_jual'=>'required|numeric',
+            'subtotal'=>'required|numeric'
+        ]);
+
+        $detailPenjualan->update($request->all());
+
+        return redirect()->route('detail-penjualan.index')
+                ->with('success','Data berhasil diupdate');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(DetailPenjualan $detailPenjualan)
     {
-        //
+        $detailPenjualan->delete();
+
+        return redirect()->route('detail-penjualan.index')
+                ->with('success','Data berhasil dihapus');
     }
 }

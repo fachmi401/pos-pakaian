@@ -1,33 +1,33 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace App\Models;
 
-return new class extends Migration
+use Illuminate\Database\Eloquent\Model;
+
+class Penjualan extends Model
 {
-    public function up(): void
+    protected $fillable = [
+        'pelanggan_id',
+        'kasir_id',
+        'tanggal',
+        'total',
+    ];
+
+    // Relasi ke pelanggan
+    public function pelanggan()
     {
-        Schema::create('penjualans', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('pelanggan_id')
-                  ->constrained('pelanggans')
-                  ->onDelete('cascade');
-
-            $table->foreignId('kasir_id')
-                  ->constrained('kasirs')
-                  ->onDelete('cascade');
-
-            $table->date('tanggal');
-            $table->decimal('total', 12, 2)->default(0);
-
-            $table->timestamps();
-        });
+        return $this->belongsTo(Pelanggan::class);
     }
 
-    public function down(): void
+    // Relasi ke kasir
+    public function kasir()
     {
-        Schema::dropIfExists('penjualans');
+        return $this->belongsTo(Kasir::class);
     }
-};
+
+    // Relasi ke detail penjualan
+    public function detailPenjualans()
+    {
+        return $this->hasMany(DetailPenjualan::class);
+    }
+}

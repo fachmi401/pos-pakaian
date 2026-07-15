@@ -3,63 +3,47 @@
 namespace App\Http\Controllers;
 
 use App\Models\DetailPembelian;
+use App\Models\Pembelian;
+use App\Models\Produk;
 use Illuminate\Http\Request;
 
 class DetailPembelianController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $details = DetailPembelian::with(['pembelian', 'produk'])->get();
+
+        return view('detail_pembelian.index', compact('details'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $pembelians = Pembelian::all();
+        $produks = Produk::all();
+
+        return view('detail_pembelian.create', compact('pembelians', 'produks'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'pembelian_id' => 'required',
+            'produk_id' => 'required',
+            'jumlah' => 'required|numeric',
+            'harga_beli' => 'required|numeric'
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(DetailPembelian $detailPembelian)
-    {
-        //
-    }
+        $subtotal = $request->jumlah * $request->harga_beli;
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(DetailPembelian $detailPembelian)
-    {
-        //
-    }
+        DetailPembelian::create([
+            'pembelian_id' => $request->pembelian_id,
+            'produk_id' => $request->produk_id,
+            'jumlah' => $request->jumlah,
+            'harga_beli' => $request->harga_beli,
+            'subtotal' => $subtotal,
+        ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, DetailPembelian $detailPembelian)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(DetailPembelian $detailPembelian)
-    {
-        //
+        return redirect()->route('detail-pembelian.index')
+            ->with('success', 'Detail pembelian berhasil ditambahkan.');
     }
 }
